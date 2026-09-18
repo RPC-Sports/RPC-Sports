@@ -517,6 +517,138 @@ footer {
     <br><br>
     © 2026 RPC Sports
 </footer>
+<script>
+const cards = document.querySelectorAll(".card");
+const filters = document.querySelectorAll(".filter");
+const search = document.querySelector(".search");
+const navLinks = document.querySelectorAll("nav a");
+const viewAllLinks = document.querySelectorAll(".section-title a");
+const watchButtons = document.querySelectorAll(".watch");
 
+let currentSport = "ALL";
+
+function filterCards(sport) {
+    currentSport = sport.toUpperCase();
+
+    cards.forEach(card => {
+        const cardSport = card.querySelector(".sport").textContent.trim().toUpperCase();
+
+        const matchesSport =
+            currentSport === "ALL" || cardSport === currentSport;
+
+        const searchText = search.value.toLowerCase();
+        const matchesSearch =
+            card.textContent.toLowerCase().includes(searchText);
+
+        card.style.display =
+            matchesSport && matchesSearch ? "" : "none";
+    });
+
+    filters.forEach(button => {
+        const buttonSport = button.textContent
+            .replace("🏀", "")
+            .replace("🏈", "")
+            .replace("⚾", "")
+            .replace("🏒", "")
+            .trim()
+            .toUpperCase();
+
+        button.classList.toggle(
+            "active",
+            buttonSport === currentSport
+        );
+    });
+}
+
+/* Sport filter buttons */
+filters.forEach(button => {
+    button.addEventListener("click", () => {
+        const sport = button.textContent
+            .replace("🏀", "")
+            .replace("🏈", "")
+            .replace("⚾", "")
+            .replace("🏒", "")
+            .trim();
+
+        filterCards(sport);
+        document.querySelector(".cards").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    });
+});
+
+/* Search */
+search.addEventListener("input", () => {
+    filterCards(currentSport);
+});
+
+/* Navigation */
+navLinks.forEach(link => {
+    link.addEventListener("click", event => {
+        event.preventDefault();
+
+        const name = link.textContent.trim().toUpperCase();
+
+        if (name === "HOME") {
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+            filterCards("ALL");
+            return;
+        }
+
+        filterCards(name);
+
+        document.querySelector(".cards").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    });
+});
+
+/* View All */
+viewAllLinks.forEach(link => {
+    link.addEventListener("click", event => {
+        event.preventDefault();
+
+        search.value = "";
+        filterCards("ALL");
+
+        document.querySelector(".cards").scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    });
+});
+
+/* Watch buttons */
+watchButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        const card = button.closest(".card, .feature");
+
+        const player =
+            card.querySelector(".player-name")?.textContent ||
+            card.querySelector("h3")?.textContent ||
+            "Performance";
+
+        const stats =
+            card.querySelector(".stats")?.textContent
+            .replace(/\s+/g, " ")
+            .trim() ||
+            card.querySelector("p")?.textContent ||
+            "";
+
+        alert(
+            "RPC SPORTS\n\n" +
+            player +
+            "\n\n" +
+            stats +
+            "\n\nVideo coming soon!"
+        );
+    });
+});
+</script>
 </body>
 </html>
